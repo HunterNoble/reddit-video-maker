@@ -131,3 +131,7 @@ dmypy.json
 
 
 exports/
+
+/**/info.py
+/bg_vids/
+/exports/

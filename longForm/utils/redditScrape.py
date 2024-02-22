@@ -1,9 +1,10 @@
 import praw
+import info
 
 reddit = praw.Reddit (
-    client_id="",
-    client_secret="",
-    user_agent=""
+    client_id=info.client_id,
+    client_secret=info.client_secret,
+    user_agent=info.user_agent
 )
 
 def get_posts(sub, count, span):

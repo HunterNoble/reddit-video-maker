@@ -1,15 +1,19 @@
 from moviepy.editor import *
 from moviepy.video import *
+from moviepy.video.fx.all import crop
 import moviepy.editor as mpe
 import os
 import random
 import time
+import shutil
 
 
 def createVideo(username):
     audioClip = []
     imageClip = []
     length = -0.5
+    res_x = 720
+    res_y = 1080
 
     startTimes = [0]
 
@@ -29,11 +33,15 @@ def createVideo(username):
         if ".png" in files:
             clip = ImageClip(username+"/"+files,duration=audioClip[i].duration).set_start(startTimes[i])
             
+
             (w,h) = clip.size
-            clip = clip.resize(newsize=(w*1.5,h*1.5))
-            (w,h) = (w*1.5,h*1.5)
-            clip = clip.set_position((540-w/2,960-h/2))
-            clip = clip.set_opacity(0.9)
+            # clip = clip.resize(newsize=(w*1.5,h*1.5))
+            clip = clip.resize((w*1.25,h*1.25))
+            # (w,h) = (w*1.5,h*1.5)
+            (w,h) = clip.size
+            # clip = clip.set_position((540-w/2,960-h/2))
+            clip = clip.set_position((res_x/2-w/2,res_y/2-h/2))
+            clip = clip.set_opacity(1)
             imageClip.append(clip)
             i += 1
     i = 0
@@ -41,12 +49,13 @@ def createVideo(username):
     #videoImages = CompositeVideoClip(imageClip)
     videoAudio = CompositeAudioClip(audioClip)
 
-    backgroundClip = ColorClip((720,1280), (0,0,255), duration=videoAudio.duration)
-    bg_file = os.listdir("bg_vids")[random.randrange(0,len(os.listdir("bg_vids")))]
-    backgroundClip = VideoFileClip("bg_vids/"+bg_file)
+    # backgroundClip = ColorClip((720,1280), (0,0,255), duration=videoAudio.duration)
+    bg_file = os.listdir("../bg_vids")[random.randrange(0,len(os.listdir("../bg_vids")))]
+    backgroundClip = VideoFileClip("../bg_vids/"+bg_file)
+    backgroundClip = crop(backgroundClip, x_center=backgroundClip.w/2, y_center=backgroundClip.h/2, width=res_x, height=res_y)
     videoStart = int(backgroundClip.duration-videoAudio.duration)
     videoStart = random.randrange(0,videoStart)
-    backgroundClip = backgroundClip.subclip(videoStart, videoStart + videoAudio.duration)
+    backgroundClip = backgroundClip.subclip(videoStart, videoStart + videoAudio.duration + .75)
     print(bg_file)
     #(w, h) = videoImages.size
 
@@ -54,10 +63,23 @@ def createVideo(username):
     
     videoClip = backgroundClip
     videoClip = CompositeVideoClip([videoClip] + imageClip)
-    audio_background = mpe.AudioFileClip("music/"+os.listdir("music")[random.randrange(0,len(os.listdir("music")))])
-    final_audio = mpe.CompositeAudioClip([videoAudio, audio_background]).set_duration(backgroundClip.duration)
+    audio_background = mpe.AudioFileClip("../music/"+os.listdir("../music")[random.randrange(0,len(os.listdir("../music")))])
+
+    # create music to last video duration
+    while audio_background.duration < videoClip.duration:
+        audio_background = concatenate_audioclips([audio_background, mpe.AudioFileClip("../music/"+os.listdir("../music")[random.randrange(0,len(os.listdir("../music")))])])
+    
+    # audio_background.fx(afx.volumex, 0.9)
+
+    # final audio that will be put over video
+    final_audio = mpe.CompositeAudioClip([videoAudio, audio_background.fx(afx.volumex, 0.1)]).set_duration(backgroundClip.duration)
     videoClip.audio = final_audio
-    videoClip.write_videofile("exports/"+username+".mp4", fps=30)
+
+    # create mp4 file
+    videoClip.write_videofile("../exports/"+username+".mp4", fps=30)
+
+    # remove temp files
+    shutil.rmtree(username+"")
 
     time.sleep(5)
 

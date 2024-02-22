@@ -1,7 +1,8 @@
 from types import NoneType
 from utils.redditScrape import scrapeComments
-from utils.audioGenerator import soundifyAuthor, soundifyComment
-from utils.captionCreate import commentImage, titleImage
+# from utils.audioGenerator import soundifyAuthor, soundifyComment, soundifyFollow, soundifyMakeComment
+from utils.audioEleven import soundifyAuthor, soundifyComment
+from utils.captionCreate import commentImage, titleImage, commentBlankImage
 from utils.videoCreate import createVideo
 import shutil
 import os
@@ -11,7 +12,7 @@ import time
 ### subreddit, number of posts, timeframe
 
 
-for i in range(1):
+for i in range(5):
     #for file in os.listdir("temp"):
     #    os.remove("temp/"+file)
     
@@ -23,6 +24,16 @@ for i in range(1):
         shutil.rmtree(asker)
     subreddit = str(post[0].subreddit)
     os.makedirs(asker)
+
+    # if len(post) > 1:
+    #     post.insert(1, 'Don\'t forget to follow!')
+    #     post[1].author = asker
+    #     commentBlankImage(post[1], 1, asker)
+    # if len(post) > 3:
+    #     post.insert(3, 'If you hold the comment button, you will see your 4 most used emoji')
+    #     post[1].author = asker
+    #     commentBlankImage(post[3], 3, asker)
+
     for j in range(len(post)):
         
         if post[j].author is None:
@@ -36,7 +47,12 @@ for i in range(1):
             print(post[j].title)
             titleImage(post[j].title, author, "r/"+subreddit)
         else:
-            text = post[j].body
+            if j == 2:
+                text = 'Don\'t forget to follow!'
+            elif j == 5:
+                text = 'Holding the comment button shows your 4 most used emojis'
+            else:
+                text = post[j].body
             print(text)
             sections = []
             if len(text) > 500:
@@ -45,13 +61,13 @@ for i in range(1):
                 for k in range(len(text)):
                     if k % 300 == 0:
                         if text[k] == ".":
-                            nextSpace = k + 2
+                            nextSpace = k + 1
                             sections.append(text[length:nextSpace])
                             length = nextSpace
                         else:
                             for l in range(len(text[:k])):
                                 if text[l] == ".":
-                                    nextSpace = l + 2
+                                    nextSpace = l + 1
                                     
                             sections.append(text[length:nextSpace])
                             length = nextSpace

@@ -36,6 +36,17 @@ def soundifyComment(comment, index, sectionid, asker):
     engine.save_to_file(comment, asker+"/temp"+str(index)+"_"+str(sectionid)+".mp3")
     engine.runAndWait()
 
+def soundifyFollow(asker):
+    voices = engine.getProperty('voices')
+    engine.setProperty('voice', voices[0].id)
+    engine.save_to_file('Don\'t forget to follow!', asker+"/follow.mp3")
+    engine.runAndWait()
+
+def soundifyMakeComment(asker):
+    voices = engine.getProperty('voices')
+    engine.setProperty('voice', voices[0].id)
+    engine.save_to_file('If you hold the comment button, you can see your 4 most used emoji.', asker+"/follow.mp3")
+    engine.runAndWait()
 
 '''
 for voice in voices:

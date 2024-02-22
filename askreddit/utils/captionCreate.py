@@ -13,12 +13,12 @@ def titleImage(text, username, subreddit):
     lines = []
     length = 0
     nextSpace = 0
-    font = ImageFont.truetype("fonts/helvetica.ttf", 24)
-    userFont = ImageFont.truetype("fonts/helvetica.ttf", 20)
+    font = ImageFont.truetype("../fonts/helvetica.ttf", 24)
+    userFont = ImageFont.truetype("../fonts/helvetica.ttf", 20)
 
     for i in range(len(text)):
         if i != 0:
-            if i % 45 == 0:
+            if i % 30 == 0:
                 if text[i] == " ":
                     lines.append(text[length:i])
                     length = i
@@ -48,10 +48,10 @@ def titleImage(text, username, subreddit):
     draw = ImageDraw.Draw(mask) 
     draw.ellipse((0, 0) + size, fill=255)
 
-    for icons in os.listdir("subreddit_icon"):
+    for icons in os.listdir("../subreddit_icon"):
         if ".png" in icons:
 
-            im = Image.open('subreddit_icon/askreddit.png')
+            im = Image.open('../subreddit_icon/askreddit.png')
             im = im.convert('RGBA')
             im = im.resize((60,60))
             
@@ -75,12 +75,12 @@ def commentImage(username, text, num, sectionid, asker):
     lines = []
     length = 0
     nextSpace = 0
-    font = ImageFont.truetype("fonts/helvetica.ttf", 20)
-    userFont = ImageFont.truetype("fonts/helvetica.ttf", 15)
+    font = ImageFont.truetype("../fonts/helvetica.ttf", 20)
+    userFont = ImageFont.truetype("../fonts/helvetica.ttf", 15)
 
     for i in range(len(text)):
         if i != 0:
-            if i % 45 == 0:
+            if i % 40 == 0:
                 if text[i] == " ":
                     lines.append(text[length:i])
                     length = i
@@ -108,7 +108,7 @@ def commentImage(username, text, num, sectionid, asker):
             line[0] == " "
 
 
-    img = Image.new('RGB',(500,text.count("\n")*21+10),color=(30,30,30))
+    img = Image.new('RGB',(500,text.count("\n")*21+10),color=(15,15,15))
     d = ImageDraw.Draw(img)
 
     pfps = []
@@ -118,10 +118,10 @@ def commentImage(username, text, num, sectionid, asker):
     draw = ImageDraw.Draw(mask) 
     draw.ellipse((0, 0) + size, fill=255)
 
-    for pfp in os.listdir("pfp"):
+    for pfp in os.listdir("../pfp"):
         if "pfp" in pfp:
 
-            im = Image.open('pfp/'+pfp)
+            im = Image.open('../pfp/'+pfp)
             im = im.convert('RGBA')
             im = im.resize((40,40))
             
@@ -140,6 +140,16 @@ def commentImage(username, text, num, sectionid, asker):
         d.text((10,10), text,fill=(250,250,250), align="left", font=font)
 
     img.save(asker+"/"+str(num)+"_"+username+"_"+str(sectionid)+'.png')
+
+def commentBlankImage(text, index, asker):
+    font = ImageFont.truetype("../fonts/helvetica.ttf", 20)
+
+    img = Image.new('RGB',(500,text.count("\n")*21+10),color=(15,15,15))
+
+    d = ImageDraw.Draw(img)
+    d.text((10,10), text,fill=(250,250,250), align="left", font=font)
+
+    img.save(asker + '/' + str(index) + '.png')
 
 
 if __name__ == "__main__":
