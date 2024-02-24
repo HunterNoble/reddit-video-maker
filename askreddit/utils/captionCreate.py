@@ -30,6 +30,7 @@ def titleImage(text, username, subreddit):
                     length = nextSpace
     
     lines.append(text[length:len(text)])
+    # lines.append('Don\'t forget to follow!')
 
     lines.insert(0, "      ")
     lines.insert(0, "      ")
@@ -82,7 +83,7 @@ def commentImage(username, text, num, sectionid, asker):
         if i != 0:
             if i % 40 == 0:
                 if text[i] == " ":
-                    lines.append(text[length:i])
+                    lines.append(text[length:i-1])
                     length = i
                 else:
                     for j in range(len(text[:i])):
@@ -106,6 +107,7 @@ def commentImage(username, text, num, sectionid, asker):
             text += line + "\n"
         except:
             line[0] == " "
+            # text += line + "\n"
 
 
     img = Image.new('RGB',(500,text.count("\n")*21+10),color=(15,15,15))
@@ -142,12 +144,39 @@ def commentImage(username, text, num, sectionid, asker):
     img.save(asker+"/"+str(num)+"_"+username+"_"+str(sectionid)+'.png')
 
 def commentBlankImage(text, index, asker):
+    lines = []
+    length = 0
     font = ImageFont.truetype("../fonts/helvetica.ttf", 20)
+
+    for i in range(len(text)):
+        if i != 0:
+            if i % 40 == 0:
+                if text[i] == " ":
+                    lines.append(text[length:i])
+                    length = i
+                else:
+                    for j in range(len(text[:i])):
+                        if text[j] == " ":
+                            nextSpace = j
+                    lines.append(text[length:nextSpace])
+                    length = nextSpace
+    
+    lines.append(text[length:len(text)])   
+
+    text = ""
+    for line in lines:
+        try:
+            if line[0] == " ":
+                line = line[1:]
+
+            text += line + "\n"
+        except:
+            line[0] == " "
 
     img = Image.new('RGB',(500,text.count("\n")*21+10),color=(15,15,15))
 
     d = ImageDraw.Draw(img)
-    d.text((10,10), text,fill=(250,250,250), align="left", font=font)
+    d.text((10,10), text, fill=(250,250,250), align="left", font=font)
 
     img.save(asker + '/' + str(index) + '.png')
 
