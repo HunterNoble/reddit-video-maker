@@ -16,7 +16,7 @@ import concurrent.futures
 def process_video(i):
     #for file in os.listdir("temp"):
     #    os.remove("temp/"+file)
-
+    
     postnum = i + 1
     # scrape best post i to create movie
     post = scrapeComments("askreddit", postnum, "day")
@@ -78,7 +78,7 @@ def process_video(i):
             # if title post, print title caption with post name and info
             # print(post[j].title)
             titleImage(post[j].title, author, "r/"+subreddit)
-            soundifyAuthor(post[0].title, asker)
+            soundifyAuthor(post[j].title, asker)
         else:
             # if not title post, create comment caption
             try:
@@ -148,7 +148,6 @@ if __name__ == '__main__':
     # with concurrent.futures.ThreadPoolExecutor() as executor:
         for i in range(num_of_posts):
             executor.submit(process_video, i)
-        # [executor.submit(process_video, i) for i in range(num_of_posts)]
 
     t2 = time.perf_counter()
 

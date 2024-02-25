@@ -1,8 +1,11 @@
 import elevenlabs
-from .info import eleven_labs_api_key
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # set API key for eleven labs
-elevenlabs.set_api_key(eleven_labs_api_key)
+elevenlabs.set_api_key(os.getenv('ELEVENLABS_API_KEY'))
 
 # set voice - 'Rachel'
 voice = elevenlabs.Voice(
