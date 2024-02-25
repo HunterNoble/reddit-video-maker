@@ -1,20 +1,19 @@
 from types import NoneType
 from utils.redditScrape import scrapeComments
-# from utils.audioGenerator import soundifyAuthor, soundifyComment
+from utils.audioGenerator import soundifyAuthor, soundifyComment
 # from utils.audioEleven import soundifyAuthor, soundifyComment
-from utils.audioGTTS import soundifyAuthor, soundifyComment
+# from utils.audioGTTS import soundifyAuthor, soundifyComment
 from utils.captionCreate import commentImage, titleImage, commentBlankImage
 from utils.videoCreate import createVideo
 import shutil
 import os
 import time
-
-# input of how many posts to scrape
-num_of_posts = int(input('How many videos would you like to create?\n'))
+import concurrent.futures
 
 # Gets posts and top x comments from selected subreddit
 ### subreddit, number of posts, timeframe
-for i in range(num_of_posts):
+# for i in range(num_of_posts):
+def process_video(i):
     #for file in os.listdir("temp"):
     #    os.remove("temp/"+file)
 
@@ -36,7 +35,8 @@ for i in range(num_of_posts):
             skip = True
     if skip:
         print ('Skipping post by: ' + asker)
-        continue
+        # continue
+        return
 
     # delete post directory if already exists
     if os.path.isdir(asker):
@@ -131,7 +131,28 @@ for i in range(num_of_posts):
         author = "[deleted]"
     else:
         author = post[0].author.name
+
     createVideo(author)
+
+if __name__ == '__main__':
+    t1 = time.perf_counter()
+
+    # input of how many posts to scrape
+    num_of_posts = input('How many videos would you like to create?\n')
+    while not num_of_posts.isnumeric():
+        num_of_posts = input('That was not a number. How many videos would you like to create?\n')
+    num_of_posts = int(num_of_posts)
+
+    # multiprocessing to speed up video creation
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+    # with concurrent.futures.ThreadPoolExecutor() as executor:
+        for i in range(num_of_posts):
+            executor.submit(process_video, i)
+        # [executor.submit(process_video, i) for i in range(num_of_posts)]
+
+    t2 = time.perf_counter()
+
+    print(f'Finished in {t2-t1} seconds')
 
 # TikTok tags
 # #fyp #foryoupage #askreddit #reddit #askredditstories #redditreadings #reddittts
