@@ -1,5 +1,4 @@
-import pyttsx3
-import random
+import pyttsx3, random
 
 engine = pyttsx3.init()
 
@@ -10,9 +9,7 @@ voices = engine.getProperty('voices')
 def soundifyAuthor(title, asker):
 
     voices = engine.getProperty('voices')
-    engine.setProperty('voice', voices[random.randrange(0,2)].id)
-
-    # title += 'Don\'t forget to follow!'
+    engine.setProperty('voice', voices[1].id)
 
     engine.save_to_file(title, asker+"/temp"+"0"+".mp3")
     engine.runAndWait()

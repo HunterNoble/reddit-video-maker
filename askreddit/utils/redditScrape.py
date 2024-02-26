@@ -1,5 +1,4 @@
-import praw
-import os
+import praw, os
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -8,7 +7,6 @@ reddit = praw.Reddit (
     client_id=os.getenv('REDDIT_CLIENT_ID'),
     client_secret=os.getenv('REDDIT_CLIENT_SECRET'),
     user_agent=os.getenv('REDDIT_USER_AGENT')
-
 )
 
 def get_posts(sub, count, span):
@@ -24,13 +22,12 @@ def get_comments(submission):
     submission.comment_sort = 'best'
 
     comments = []
-    num_comments = 30
+    num_comments = 20
 
     for top_level_comment in submission.comments:
-        
         # make sure it's not a link or removed and get top #num comments
         try:
-            if "http" not in top_level_comment.body and len(comments) <= num_comments and top_level_comment.body != ('[removed]' or '[deleted]'):
+            if "http" not in top_level_comment.body and len(comments) <= num_comments and top_level_comment.body not in ['[removed]', '[deleted]']:
                 comments.append(top_level_comment)
             elif len(comments) > num_comments:
                 break
@@ -46,12 +43,14 @@ def scrapeComments(subreddit, count, span):
     for post in posts:
         got_comments = get_comments(post)
 
+        # if one of the top comments is exceedingly long, makes that the only comment
         for comment in got_comments:
             if len(comment.body) > 600:
                 got_comments = [comment]
                 break
         comments=[post]
         length = 0
+
         # return as many comments that are under 2000 characters
         for comment in range(len(got_comments)):
             length += len(got_comments[comment].body)

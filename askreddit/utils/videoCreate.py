@@ -1,14 +1,9 @@
 from moviepy.editor import *
 from moviepy.video import *
 from moviepy.video.fx.all import crop
-import moviepy.editor as mpe
-import os
-import random
-import time
-import shutil
 from datetime import datetime
-import re
-
+import moviepy.editor as mpe
+import os, random, time, shutil, re
 
 def createVideo(username):
     audioClip = []
@@ -28,7 +23,7 @@ def createVideo(username):
     def natural_keys(text):
         return [ atoi(c) for c in re.split(r'(\d+)', text) ]
 
-    for files in sorted(os.listdir(username+""), key=natural_keys):
+    for files in sorted(os.listdir(str(username)), key=natural_keys):
         if ".mp3" in files:
             audio = AudioFileClip(username+"/"+files)
             audioClip.append(audio.set_start(length+0.5))
@@ -36,7 +31,7 @@ def createVideo(username):
             startTimes.append(length)
             
     i = 0
-    for files in sorted(os.listdir(username+""), key=natural_keys):
+    for files in sorted(os.listdir(str(username)), key=natural_keys):
 
         if ".png" in files:
             clip = ImageClip(username+"/"+files,duration=audioClip[i].duration).set_start(startTimes[i])
@@ -88,8 +83,6 @@ def createVideo(username):
     while audio_background.duration < videoClip.duration:
         # audio_background = concatenate_audioclips([audio_background, mpe.AudioFileClip("../music/"+os.listdir("../music")[random.randrange(0,len(os.listdir("../music")))])])
         audio_background = concatenate_audioclips([audio_background, audio_background])
-    
-    # audio_background.fx(afx.volumex, 0.9)
 
     # final audio that will be put over video
     final_audio = mpe.CompositeAudioClip([videoAudio, audio_background.fx(afx.volumex, 0.25)]).set_duration(backgroundClip.duration)

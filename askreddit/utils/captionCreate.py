@@ -1,47 +1,45 @@
 from PIL import Image, ImageDraw, ImageFont, ImageOps
-import random
-import os
+import random, os
 
 ## create images based on text -> image needs to look like a post on 
 ## reddit/generic social media post
 ## different image for title
 
-text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec condimentum est ac massa lobortis, eget vulputate lectus iaculis. Curabitur pellentesque tincidunt dui, ac interdum enim efficitur in. Sed bibendum neque non magna dignissim, vitae laoreet lacus malesuada. Cras at elementum nulla. Maecenas dapibus leo arcu, vitae aliquam mauris volutpat eu. Quisque tempus elementum rutrum. Nullam hendrerit luctus augue, eget mollis lectus sagittis sit amet. Nunc facilisis varius nulla, sed efficitur diam euismod ullamcorper."
-username = "Lorem ipsum"
+text = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec condimentum est ac massa lobortis, eget vulputate lectus iaculis. Curabitur pellentesque tincidunt dui, ac interdum enim efficitur in. Sed bibendum neque non magna dignissim, vitae laoreet lacus malesuada. Cras at elementum nulla. Maecenas dapibus leo arcu, vitae aliquam mauris volutpat eu. Quisque tempus elementum rutrum. Nullam hendrerit luctus augue, eget mollis lectus sagittis sit amet. Nunc facilisis varius nulla, sed efficitur diam euismod ullamcorper.'
+username = 'Lorem ipsum'
 
 def titleImage(text, username, subreddit):
     lines = []
     length = 0
     nextSpace = 0
-    font = ImageFont.truetype("../fonts/helvetica.ttf", 24)
-    userFont = ImageFont.truetype("../fonts/helvetica.ttf", 20)
+    font = ImageFont.truetype('../fonts/helvetica.ttf', 24)
+    userFont = ImageFont.truetype('../fonts/helvetica.ttf', 20)
 
     for i in range(len(text)):
         if i != 0:
             if i % 30 == 0:
-                if text[i] == " ":
+                if text[i] == ' ':
                     lines.append(text[length:i])
                     length = i
                 else:
                     for j in range(len(text[:i])):
-                        if text[j] == " ":
+                        if text[j] == ' ':
                             nextSpace = j
                     lines.append(text[length:nextSpace])
                     length = nextSpace
     
     lines.append(text[length:len(text)])
-    # lines.append('Don\'t forget to follow!')
 
-    lines.insert(0, "      ")
-    lines.insert(0, "      ")
-    lines.insert(0, "      ")
+    lines.insert(0, '      ')
+    lines.insert(0, '      ')
+    lines.insert(0, '      ')
 
-    text = ""
+    text = ''
     for line in lines:
-        if line[0] == " ":
+        if line[0] == ' ':
             line = line[1:]
     
-        text+= line + "\n"
+        text+= line + '\n'
 
     icon = []
     size = (60, 60)
@@ -49,8 +47,8 @@ def titleImage(text, username, subreddit):
     draw = ImageDraw.Draw(mask) 
     draw.ellipse((0, 0) + size, fill=255)
 
-    for icons in os.listdir("../subreddit_icon"):
-        if ".png" in icons:
+    for icons in os.listdir('../subreddit_icon'):
+        if '.png' in icons:
 
             im = Image.open('../subreddit_icon/askreddit.png')
             im = im.convert('RGBA')
@@ -64,30 +62,30 @@ def titleImage(text, username, subreddit):
     img = Image.new('RGB',(500,len(lines)*28+10),color=(30,30,30))
     d = ImageDraw.Draw(img)
 
-    d.text((10,10), text,fill=(250,250,250), align="left", font=font)
-    d.text((70,10), subreddit,fill=(250,250,250), align="left", font=font)
-    d.text((80,35), username,fill=(200,200,200), align="left", font=userFont)
+    d.text((10,10), text,fill=(250,250,250), align='left', font=font)
+    d.text((70,10), subreddit,fill=(250,250,250), align='left', font=font)
+    d.text((80,35), username,fill=(200,200,200), align='left', font=userFont)
 
     img.paste(pfp,(5,5),mask)
-    img.save(username+"/0_title.png")
+    img.save(username+'/0_title.png')
 
 
 def commentImage(username, text, num, sectionid, asker):
     lines = []
     length = 0
     nextSpace = 0
-    font = ImageFont.truetype("../fonts/helvetica.ttf", 20)
-    userFont = ImageFont.truetype("../fonts/helvetica.ttf", 15)
+    font = ImageFont.truetype('../fonts/helvetica.ttf', 20)
+    userFont = ImageFont.truetype('../fonts/helvetica.ttf', 15)
 
     for i in range(len(text)):
         if i != 0:
             if i % 40 == 0:
-                if text[i] == " ":
+                if text[i] == ' ':
                     lines.append(text[length:i-1])
                     length = i
                 else:
                     for j in range(len(text[:i])):
-                        if text[j] == " ":
+                        if text[j] == ' ':
                             nextSpace = j
                     lines.append(text[length:nextSpace])
                     length = nextSpace
@@ -95,22 +93,22 @@ def commentImage(username, text, num, sectionid, asker):
     lines.append(text[length:len(text)])   
 
     if sectionid == 0:
-        lines.insert(0, " ")
-        lines.insert(1, " ")
+        lines.insert(0, ' ')
+        lines.insert(1, ' ')
 
-    text = ""
+    text = ''
     for line in lines:
         try:
-            if line[0] == " ":
+            if line[0] == ' ':
                 line = line[1:]
 
-            text += line + "\n"
+            text += line + '\n'
         except:
-            line[0] == " "
-            # text += line + "\n"
+            line[0] == ' '
+            # text += line + '\n'
 
 
-    img = Image.new('RGB',(500,text.count("\n")*21+10),color=(15,15,15))
+    img = Image.new('RGB',(500,text.count('\n')*21+10),color=(15,15,15))
     d = ImageDraw.Draw(img)
 
     pfps = []
@@ -120,8 +118,8 @@ def commentImage(username, text, num, sectionid, asker):
     draw = ImageDraw.Draw(mask) 
     draw.ellipse((0, 0) + size, fill=255)
 
-    for pfp in os.listdir("../pfp"):
-        if "pfp" in pfp:
+    for pfp in os.listdir('../pfp'):
+        if 'pfp' in pfp:
 
             im = Image.open('../pfp/'+pfp)
             im = im.convert('RGBA')
@@ -132,55 +130,55 @@ def commentImage(username, text, num, sectionid, asker):
     pfp = pfps[random.randrange(0,5)]
     
     if sectionid == 0:
-        d.text((10,10), text,fill=(250,250,250), align="left", font=font)
+        d.text((10,10), text,fill=(250,250,250), align='left', font=font)
     
-        d.text((50,15), username,fill=(200,200,200), align="left", font=userFont)
+        d.text((50,15), username,fill=(200,200,200), align='left', font=userFont)
 
         img.paste(pfp,(5,5),mask)
     
     else:
-        d.text((10,10), text,fill=(250,250,250), align="left", font=font)
+        d.text((10,10), text,fill=(250,250,250), align='left', font=font)
 
-    img.save(asker+"/"+str(num)+"_"+username+"_"+str(sectionid)+'.png')
+    img.save(asker+'/'+str(num)+'_'+username+'_'+str(sectionid)+'.png')
 
 def commentBlankImage(text, index, asker):
     lines = []
     length = 0
-    font = ImageFont.truetype("../fonts/helvetica.ttf", 20)
+    font = ImageFont.truetype('../fonts/helvetica.ttf', 20)
 
     for i in range(len(text)):
         if i != 0:
             if i % 40 == 0:
-                if text[i] == " ":
+                if text[i] == ' ':
                     lines.append(text[length:i])
                     length = i
                 else:
                     for j in range(len(text[:i])):
-                        if text[j] == " ":
+                        if text[j] == ' ':
                             nextSpace = j
                     lines.append(text[length:nextSpace])
                     length = nextSpace
     
     lines.append(text[length:len(text)])   
 
-    text = ""
+    text = ''
     for line in lines:
         try:
-            if line[0] == " ":
+            if line[0] == ' ':
                 line = line[1:]
 
-            text += line + "\n"
+            text += line + '\n'
         except:
-            line[0] == " "
+            line[0] == ' '
 
-    img = Image.new('RGB',(500,text.count("\n")*21+10),color=(15,15,15))
+    img = Image.new('RGB',(500,text.count('\n')*21+10),color=(15,15,15))
 
     d = ImageDraw.Draw(img)
-    d.text((10,10), text, fill=(250,250,250), align="left", font=font)
+    d.text((10,10), text, fill=(250,250,250), align='left', font=font)
 
     img.save(asker + '/' + str(index) + '.png')
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     commentImage(username, text, 0, 0)
-    titleImage("what's 9 + 10??", "u/bogos", "r/binted")
+    titleImage('what\'s 9 + 10??', 'u/bogos', 'r/binted')
