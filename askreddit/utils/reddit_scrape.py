@@ -36,7 +36,7 @@ def get_comments(submission):
 
     return comments
 
-def scrapeComments(subreddit, count, span):
+def scrape_comments(subreddit, count, span):
     posts = get_posts(subreddit, count, span)
     
 
@@ -66,4 +66,4 @@ def scrapeComments(subreddit, count, span):
     return comments
 
 if __name__ == "__main__":
-    scrapeComments("askreddit", 1, "day")
+    scrape_comments("askreddit", 1, "day")

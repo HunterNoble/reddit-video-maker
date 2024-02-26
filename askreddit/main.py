@@ -1,10 +1,10 @@
 from types import NoneType
-from utils.redditScrape import scrapeComments
-from utils.audioGenerator import soundifyAuthor, soundifyComment
-# from utils.audioEleven import soundifyAuthor, soundifyComment
-# from utils.audioGTTS import soundifyAuthor, soundifyComment
-from utils.captionCreate import commentImage, titleImage, commentBlankImage
-from utils.videoCreate import createVideo
+from utils.reddit_scrape import scrape_comments
+from utils.audio_generator import soundify_author, soundify_comment
+# from utils.audio_eleven import soundify_author, soundify_comment
+# from utils.audio_gTTS import soundify_author, soundify_comment
+from utils.caption_create import comment_image, title_image, comment_blank_image
+from utils.video_create import create_video
 import shutil, os, time, concurrent.futures
 
 # Gets posts and top x comments from selected subreddit
@@ -13,22 +13,20 @@ import shutil, os, time, concurrent.futures
 def process_video(i):
     postnum = i + 1
     # scrape best post i to create movie
-    post = scrapeComments("askreddit", postnum, "day")
+    post = scrape_comments("askreddit", postnum, "day")
 
     # get post author
     asker = str(post[0].author)
 
-    skip = False
+    # skip = False
 
     # skip if video already exists for asker - probably a cleaner way to do this
     for files in os.listdir('../exports'):
         if asker + '.mp4' in files:
-            print (f'\nFile already exists for {asker}.')
-            skip = True
-    if skip:
-        print (f'Skipping post by: {asker}')
-        # continue
-        return
+            print (f'\nFile already exists for {asker}.\nThis was post {postnum}.')
+            return
+
+    print(f'Creating post for {author}.')
 
     # delete post directory if already exists
     if os.path.isdir(asker):
@@ -64,8 +62,8 @@ def process_video(i):
 
         if j == 0:
             # if title post, print title caption with post name and info
-            titleImage(post[j].title, author, "r/"+subreddit)
-            soundifyAuthor(post[j].title, asker)
+            title_image(post[j].title, author, "r/"+subreddit)
+            soundify_author(post[j].title, asker)
         else:
             # if not title post, create comment caption
             try:
@@ -103,11 +101,11 @@ def process_video(i):
                 if sections[section] != '':
                     try:
                         if post[j]['author'] == '':
-                            commentBlankImage(sections[section], j, asker)
-                            soundifyComment(sections[section], j, section, asker)
+                            comment_blank_image(sections[section], j, asker)
+                            soundify_comment(sections[section], j, section, asker)
                     except TypeError:
-                        commentImage(author, sections[section], j, section, asker)
-                        soundifyComment(sections[section], j, section, asker)
+                        comment_image(author, sections[section], j, section, asker)
+                        soundify_comment(sections[section], j, section, asker)
 
     # # create audio for title caption
     # soundifyAuthor(post[0].title, asker)
@@ -117,7 +115,8 @@ def process_video(i):
     else:
         author = post[0].author.name
 
-    createVideo(author)
+    print('made it here')
+    create_video(author)
 
 if __name__ == '__main__':
     t1 = time.perf_counter()
@@ -132,6 +131,7 @@ if __name__ == '__main__':
     # with concurrent.futures.ProcessPoolExecutor() as executor:
     with concurrent.futures.ThreadPoolExecutor() as executor:
         for i in range(num_of_posts):
+            print(f'Checking post #{i+1} criteria.')
             executor.submit(process_video, i)
 
     t2 = time.perf_counter()

@@ -5,7 +5,7 @@ from datetime import datetime
 import moviepy.editor as mpe
 import os, random, time, shutil, re
 
-def createVideo(username):
+def create_video(username):
     audioClip = []
     imageClip = []
     length = -0.5
@@ -46,57 +46,57 @@ def createVideo(username):
             clip.close()
     i = 0
 
-    #videoImages = CompositeVideoClip(imageClip)
-    videoAudio = CompositeAudioClip(audioClip)
+    #videoImages = Compositevideo_clip(imageClip)
+    video_audio = CompositeAudioClip(audioClip)
 
-    # backgroundClip = ColorClip((720,1280), (0,0,255), duration=videoAudio.duration)
+    # background_clip = ColorClip((720,1280), (0,0,255), duration=video_audio.duration)
     bg_file = os.listdir("../bg_vids")[random.randrange(0,len(os.listdir("../bg_vids")))]
-    backgroundClip = VideoFileClip("../bg_vids/"+bg_file)
+    background_clip = VideoFileClip("../bg_vids/"+bg_file)
 
     # set background clip to short form media size
-    backgroundClip = crop(backgroundClip, x_center=backgroundClip.w/2, y_center=backgroundClip.h/2, width=res_x, height=res_y)
+    background_clip = crop(background_clip, x_center=background_clip.w/2, y_center=background_clip.h/2, width=res_x, height=res_y)
 
     # determine latest point in background clip that it can start at
     # randomly select a point in background clip between start and latest point
     # background clip = section of video between the selected start point and end point determined by video length
-    if videoAudio.duration < 61:
-        videoStart = int(backgroundClip.duration - 61)
-        videoStart = random.randrange(0,videoStart)
-        backgroundClip = backgroundClip.subclip(videoStart, videoStart + 61)
+    if video_audio.duration < 61:
+        video_start = int(background_clip.duration - 61)
+        video_start = random.randrange(0,video_start)
+        background_clip = background_clip.subclip(video_start, video_start + 61)
     else:
-        videoStart = int(backgroundClip.duration-videoAudio.duration)
-        videoStart = random.randrange(0,videoStart)
-        backgroundClip = backgroundClip.subclip(videoStart, videoStart + videoAudio.duration + 1)
+        video_start = int(background_clip.duration-video_audio.duration)
+        video_start = random.randrange(0,video_start)
+        background_clip = background_clip.subclip(video_start, video_start + video_audio.duration + 1)
 
     print(bg_file)
     #(w, h) = videoImages.size
 
     #videoImages.crop(width=720,height=1280, x_center=w/2, y_center=h/2)
     
-    videoClip = backgroundClip
-    videoClip = CompositeVideoClip([videoClip] + imageClip)
+    video_clip = background_clip
+    video_clip = CompositeVideoClip([video_clip] + imageClip)
 
 
     audio_background = mpe.AudioFileClip("../music/"+os.listdir("../music")[random.randrange(0,len(os.listdir("../music")))])
 
     # create music to last video duration
-    while audio_background.duration < videoClip.duration:
+    while audio_background.duration < video_clip.duration:
         # audio_background = concatenate_audioclips([audio_background, mpe.AudioFileClip("../music/"+os.listdir("../music")[random.randrange(0,len(os.listdir("../music")))])])
         audio_background = concatenate_audioclips([audio_background, audio_background])
 
     # final audio that will be put over video
-    final_audio = mpe.CompositeAudioClip([videoAudio, audio_background.fx(afx.volumex, 0.25)]).set_duration(backgroundClip.duration)
-    videoClip.audio = final_audio
+    final_audio = mpe.CompositeAudioClip([video_audio, audio_background.fx(afx.volumex, 0.25)]).set_duration(background_clip.duration)
+    video_clip.audio = final_audio
 
-    # adjust videoClip speed
-    # videoClip = videoClip.fx(vfx.speedx, 1.1)
+    # adjust video_clip speed
+    # video_clip = video_clip.fx(vfx.speedx, 1.1)
 
     # create mp4 file
-    videoClip.write_videofile("../exports/"+datetime.now().strftime("%Y-%m-%d %H-%M-%S - ")+username+".mp4", fps=30)
+    video_clip.write_videofile("../exports/"+datetime.now().strftime("%Y-%m-%d %H-%M-%S - ")+username+".mp4", fps=30)
 
-    backgroundClip.close()
-    videoClip.close()
-    videoAudio.close()
+    background_clip.close()
+    video_clip.close()
+    video_audio.close()
     audio_background.close()
     final_audio.close()
 
@@ -118,4 +118,4 @@ def createVideo(username):
                     continue'''
 
 if __name__ == "__main__":
-    createVideo("post")
+    create_video("post")

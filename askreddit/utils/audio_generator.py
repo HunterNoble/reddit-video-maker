@@ -6,7 +6,7 @@ voices = engine.getProperty('voices')
 #engine.setProperty('voice', voices[0].id)
 
 
-def soundifyAuthor(title, asker):
+def soundify_author(title, asker):
 
     voices = engine.getProperty('voices')
     engine.setProperty('voice', voices[1].id)
@@ -15,7 +15,7 @@ def soundifyAuthor(title, asker):
     engine.runAndWait()
 
 
-def soundifyComment(comment, index, sectionid, asker):
+def soundify_comment(comment, index, sectionid, asker):
     
     '''
     swears = ["fuck", "shit"]

@@ -8,7 +8,7 @@ import random, os
 text = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec condimentum est ac massa lobortis, eget vulputate lectus iaculis. Curabitur pellentesque tincidunt dui, ac interdum enim efficitur in. Sed bibendum neque non magna dignissim, vitae laoreet lacus malesuada. Cras at elementum nulla. Maecenas dapibus leo arcu, vitae aliquam mauris volutpat eu. Quisque tempus elementum rutrum. Nullam hendrerit luctus augue, eget mollis lectus sagittis sit amet. Nunc facilisis varius nulla, sed efficitur diam euismod ullamcorper.'
 username = 'Lorem ipsum'
 
-def titleImage(text, username, subreddit):
+def title_image(text, username, subreddit):
     lines = []
     length = 0
     nextSpace = 0
@@ -70,7 +70,7 @@ def titleImage(text, username, subreddit):
     img.save(username+'/0_title.png')
 
 
-def commentImage(username, text, num, sectionid, asker):
+def comment_image(username, text, num, sectionid, asker):
     lines = []
     length = 0
     nextSpace = 0
@@ -79,10 +79,13 @@ def commentImage(username, text, num, sectionid, asker):
 
     for i in range(len(text)):
         if i != 0:
-            if i % 40 == 0:
+            # if text[i] == '\n':
+            #     lines.append(text[length:i])
+            #     length = i
+            if (i + length) % 40 == 0:
                 if text[i] == ' ':
                     lines.append(text[length:i-1])
-                    length = i
+                    length = i+1
                 else:
                     for j in range(len(text[:i])):
                         if text[j] == ' ':
@@ -141,7 +144,7 @@ def commentImage(username, text, num, sectionid, asker):
 
     img.save(asker+'/'+str(num)+'_'+username+'_'+str(sectionid)+'.png')
 
-def commentBlankImage(text, index, asker):
+def comment_blank_image(text, index, asker):
     lines = []
     length = 0
     font = ImageFont.truetype('../fonts/helvetica.ttf', 20)
@@ -180,5 +183,5 @@ def commentBlankImage(text, index, asker):
 
 
 if __name__ == '__main__':
-    commentImage(username, text, 0, 0)
-    titleImage('what\'s 9 + 10??', 'u/bogos', 'r/binted')
+    comment_image(username, text, 0, 0)
+    title_image('what\'s 9 + 10??', 'u/bogos', 'r/binted')

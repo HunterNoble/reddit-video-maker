@@ -13,7 +13,7 @@ voice = elevenlabs.Voice(
 )
 
 # generate speech for self post
-def soundifyAuthor(title, asker):
+def soundify_author(title, asker):
     audio = elevenlabs.generate(
         text = title,
         voice = voice,
@@ -21,7 +21,7 @@ def soundifyAuthor(title, asker):
     elevenlabs.save(audio, asker+'/temp'+'0'+'.mp3')
 
 # generate speech for comments
-def soundifyComment(comment, index, sectionid, asker):
+def soundify_comment(comment, index, sectionid, asker):
     audio = elevenlabs.generate(
         text = comment,
         voice = voice,
