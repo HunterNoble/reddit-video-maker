@@ -21,11 +21,17 @@ Install dependencies
 Change the PRAW token information of redditScrape.py in both the `longForm/utils` and `askreddit/utils` folders
 
  - get all the stuff you need https://github.com/reddit-archive/reddit/wiki/OAuth2-Quick-Start-Example#first-steps
+ - Recommended to create a .env file to store your keys in
 ``` 
+import praw, os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 reddit = praw.Reddit (
-    client_id="yourClientID",
-    client_secret="yourClientSecret",
-    user_agent="<yourUserAgent>"
+    client_id=os.getenv('REDDIT_CLIENT_ID'),
+    client_secret=os.getenv('REDDIT_CLIENT_SECRET'),
+    user_agent=os.getenv('REDDIT_USER_AGENT')
 ) 
 ```
 
