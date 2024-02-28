@@ -14,19 +14,17 @@ def process_video(i):
     postnum = i + 1
     # scrape best post i to create movie
     post = scrape_comments("askreddit", postnum, "day")
-
     # get post author
     asker = str(post[0].author)
 
-    # skip = False
+    print(f'\nScraped post {postnum}.')
 
     # skip if video already exists for asker - probably a cleaner way to do this
     for files in os.listdir('../exports'):
         if asker + '.mp4' in files:
-            print (f'\nFile already exists for {asker}.\nThis was post {postnum}.')
-            return
-
-    print(f'Creating post for {author}.')
+            print (f'File already exists for {asker}.\nThis was post {postnum}.\n')
+            return None
+    print(f'Creating post for {asker}. This is post {postnum}.')
 
     # delete post directory if already exists
     if os.path.isdir(asker):
@@ -39,13 +37,13 @@ def process_video(i):
     os.makedirs(asker)
 
     if len(post) > 1:
-        post.insert(1, {'author':'', 'body':'Be sure to comment your thoughts'})
+        post.insert(1, {'author':'', 'body':'Share your thoughts in the comments'})
     if len(post) > 2:
         post.insert (4, {'author':'', 'body':'Don\'t forget to follow!'})
     if len(post) > 12:
         post.insert (9, {'author':'', 'body':'If you hold the comment button, you will see your 4 most used emoji'})
-    if len(post) > 15:
-        post.insert (12, {'author':'', 'body':'The third name you see when you click Share then More secretly has a crush on you'})
+    # if len(post) > 15:
+    #     post.insert (12, {'author':'', 'body':'The third name you see when you click Share then More secretly has a crush on you'})
     
     for j in range(len(post)):
         try:
@@ -74,7 +72,7 @@ def process_video(i):
             sections = []
 
             # control size of caption to fit it on the screen vertically
-            if len(text) > 500:
+            if len(text) > 450:
                 length = 0
                 nextSpace = 0
                 for k in range(len(text)):
@@ -115,17 +113,16 @@ def process_video(i):
     else:
         author = post[0].author.name
 
-    print('made it here')
     create_video(author)
 
 if __name__ == '__main__':
-    t1 = time.perf_counter()
-
     # input of how many posts to scrape
     num_of_posts = input('How many videos would you like to create?\n')
     while not num_of_posts.isnumeric():
         num_of_posts = input('That was not a number. How many videos would you like to create?\n')
     num_of_posts = int(num_of_posts)
+    
+    t1 = time.perf_counter()
 
     # threading/multiprocessing to speed up video creation
     # with concurrent.futures.ProcessPoolExecutor() as executor:

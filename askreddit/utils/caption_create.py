@@ -11,7 +11,6 @@ username = 'Lorem ipsum'
 def title_image(text, username, subreddit):
     lines = []
     length = 0
-    nextSpace = 0
     font = ImageFont.truetype('../fonts/helvetica.ttf', 24)
     userFont = ImageFont.truetype('../fonts/helvetica.ttf', 20)
 
@@ -20,13 +19,15 @@ def title_image(text, username, subreddit):
             if i % 30 == 0:
                 if text[i] == ' ':
                     lines.append(text[length:i])
+                    while text[i] == ' ' or text[i] == '\n':
+                        i += 1
                     length = i
                 else:
-                    for j in range(len(text[:i])):
-                        if text[j] == ' ':
-                            nextSpace = j
-                    lines.append(text[length:nextSpace])
-                    length = nextSpace
+                    for j, k in reversed(list(enumerate(text[length:i]))):
+                        if k == ' ':
+                            lines.append(text[length:length + j + 1])
+                            length += j
+                            break
     
     lines.append(text[length:len(text)])
 
@@ -73,27 +74,31 @@ def title_image(text, username, subreddit):
 def comment_image(username, text, num, sectionid, asker):
     lines = []
     length = 0
-    nextSpace = 0
     font = ImageFont.truetype('../fonts/helvetica.ttf', 20)
     userFont = ImageFont.truetype('../fonts/helvetica.ttf', 15)
 
     for i in range(len(text)):
         if i != 0:
-            # if text[i] == '\n':
-            #     lines.append(text[length:i])
-            #     length = i
-            if (i + length) % 40 == 0:
+            if text[i] == '\n':
+                lines.append(text[length:i-1])
+                while text[i] == ' ' or text[i] == '\n':
+                    i += 1
+                length = i
+            if (i - length) % 40 == 0:
                 if text[i] == ' ':
-                    lines.append(text[length:i-1])
-                    length = i+1
+                    lines.append(text[length:i])
+                    while text[i] == ' ' or text[i] == '\n':
+                        i += 1
+                    length = i
                 else:
-                    for j in range(len(text[:i])):
-                        if text[j] == ' ':
-                            nextSpace = j
-                    lines.append(text[length:nextSpace])
-                    length = nextSpace
+                    for j, k in reversed(list(enumerate(text[length:i]))):
+                        if k == ' ':
+                            lines.append(text[length:length + j + 1])
+                            length += j
+                            break
+
     
-    lines.append(text[length:len(text)])   
+    lines.append(text[length:len(text)])
 
     if sectionid == 0:
         lines.insert(0, ' ')
@@ -107,8 +112,8 @@ def comment_image(username, text, num, sectionid, asker):
 
             text += line + '\n'
         except:
-            line[0] == ' '
-            # text += line + '\n'
+            # line[0] == ' '
+            text += line + '\n'
 
 
     img = Image.new('RGB',(500,text.count('\n')*21+10),color=(15,15,15))
@@ -130,7 +135,7 @@ def comment_image(username, text, num, sectionid, asker):
             
             pfps.append(im)
 
-    pfp = pfps[random.randrange(0,5)]
+    pfp = pfps[random.randrange(0,len(pfps))]
     
     if sectionid == 0:
         d.text((10,10), text,fill=(250,250,250), align='left', font=font)
@@ -151,16 +156,23 @@ def comment_blank_image(text, index, asker):
 
     for i in range(len(text)):
         if i != 0:
-            if i % 40 == 0:
+            if text[i] == '\n':
+                lines.append(text[length:i-1])
+                while text[i] == ' ' or text[i] == '\n':
+                    i += 1
+                length = i
+            if (i - length) % 40 == 0:
                 if text[i] == ' ':
                     lines.append(text[length:i])
+                    while text[i] == ' ' or text[i] == '\n':
+                        i += 1
                     length = i
                 else:
-                    for j in range(len(text[:i])):
-                        if text[j] == ' ':
-                            nextSpace = j
-                    lines.append(text[length:nextSpace])
-                    length = nextSpace
+                    for j, k in reversed(list(enumerate(text[length:i]))):
+                        if k == ' ':
+                            lines.append(text[length:length + j + 1])
+                            length += j
+                            break
     
     lines.append(text[length:len(text)])   
 

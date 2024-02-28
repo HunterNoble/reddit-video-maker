@@ -92,7 +92,7 @@ def create_video(username):
     # video_clip = video_clip.fx(vfx.speedx, 1.1)
 
     # create mp4 file
-    video_clip.write_videofile("../exports/"+datetime.now().strftime("%Y-%m-%d %H-%M-%S - ")+username+".mp4", fps=30)
+    video_clip.write_videofile("../exports/"+datetime.now().strftime("%Y-%m-%d %H-%M-%S - ")+username+".mp4", fps=60)
 
     background_clip.close()
     video_clip.close()
