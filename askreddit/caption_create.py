@@ -5,18 +5,23 @@ import random, os
 ## reddit/generic social media post
 ## different image for title
 
-text = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec condimentum est ac massa lobortis, eget vulputate lectus iaculis. Curabitur pellentesque tincidunt dui, ac interdum enim efficitur in. Sed bibendum neque non magna dignissim, vitae laoreet lacus malesuada. Cras at elementum nulla. Maecenas dapibus leo arcu, vitae aliquam mauris volutpat eu. Quisque tempus elementum rutrum. Nullam hendrerit luctus augue, eget mollis lectus sagittis sit amet. Nunc facilisis varius nulla, sed efficitur diam euismod ullamcorper.'
-username = 'Lorem ipsum'
-
-def title_image(text, username, subreddit):
+def make_lines(text, format):
     lines = []
     length = 0
-    font = ImageFont.truetype('../fonts/helvetica.ttf', 24)
-    userFont = ImageFont.truetype('../fonts/helvetica.ttf', 20)
 
+    if format == 'asker':
+        width = 30
+    else:
+        width = 40
+    
     for i in range(len(text)):
         if i != 0:
-            if i % 30 == 0:
+            if text[i] == '\n':
+                lines.append(text[length:i-1])
+                while text[i] == ' ' or text[i] == '\n':
+                    i += 1
+                length = i
+            if (i - length) % width == 0:
                 if text[i] == ' ':
                     lines.append(text[length:i])
                     while text[i] == ' ' or text[i] == '\n':
@@ -28,8 +33,34 @@ def title_image(text, username, subreddit):
                             lines.append(text[length:length + j + 1])
                             length += j
                             break
-    
     lines.append(text[length:len(text)])
+
+    return lines
+
+def title_image(text, username, subreddit):
+    lines = []
+    length = 0
+    font = ImageFont.truetype('./fonts/helvetica.ttf', 24)
+    userFont = ImageFont.truetype('./fonts/helvetica.ttf', 20)
+
+    # for i in range(len(text)):
+    #     if i != 0:
+    #         if i % 30 == 0:
+    #             if text[i] == ' ':
+    #                 lines.append(text[length:i])
+    #                 while text[i] == ' ' or text[i] == '\n':
+    #                     i += 1
+    #                 length = i
+    #             else:
+    #                 for j, k in reversed(list(enumerate(text[length:i]))):
+    #                     if k == ' ':
+    #                         lines.append(text[length:length + j + 1])
+    #                         length += j
+    #                         break
+    
+    # lines.append(text[length:len(text)])
+
+    lines = make_lines(text, 'asker')
 
     lines.insert(0, '      ')
     lines.insert(0, '      ')
@@ -48,10 +79,10 @@ def title_image(text, username, subreddit):
     draw = ImageDraw.Draw(mask) 
     draw.ellipse((0, 0) + size, fill=255)
 
-    for icons in os.listdir('../subreddit_icon'):
+    for icons in os.listdir('./subreddit_icon'):
         if '.png' in icons:
 
-            im = Image.open('../subreddit_icon/askreddit.png')
+            im = Image.open('./subreddit_icon/askreddit.png')
             im = im.convert('RGBA')
             im = im.resize((60,60))
             
@@ -74,31 +105,33 @@ def title_image(text, username, subreddit):
 def comment_image(username, text, num, sectionid, asker):
     lines = []
     length = 0
-    font = ImageFont.truetype('../fonts/helvetica.ttf', 20)
-    userFont = ImageFont.truetype('../fonts/helvetica.ttf', 15)
+    font = ImageFont.truetype('./fonts/helvetica.ttf', 20)
+    userFont = ImageFont.truetype('./fonts/helvetica.ttf', 15)
 
-    for i in range(len(text)):
-        if i != 0:
-            if text[i] == '\n':
-                lines.append(text[length:i-1])
-                while text[i] == ' ' or text[i] == '\n':
-                    i += 1
-                length = i
-            if (i - length) % 40 == 0:
-                if text[i] == ' ':
-                    lines.append(text[length:i])
-                    while text[i] == ' ' or text[i] == '\n':
-                        i += 1
-                    length = i
-                else:
-                    for j, k in reversed(list(enumerate(text[length:i]))):
-                        if k == ' ':
-                            lines.append(text[length:length + j + 1])
-                            length += j
-                            break
+    # for i in range(len(text)):
+    #     if i != 0:
+    #         if text[i] == '\n':
+    #             lines.append(text[length:i-1])
+    #             while text[i] == ' ' or text[i] == '\n':
+    #                 i += 1
+    #             length = i
+    #         if (i - length) % 40 == 0:
+    #             if text[i] == ' ':
+    #                 lines.append(text[length:i])
+    #                 while text[i] == ' ' or text[i] == '\n':
+    #                     i += 1
+    #                 length = i
+    #             else:
+    #                 for j, k in reversed(list(enumerate(text[length:i]))):
+    #                     if k == ' ':
+    #                         lines.append(text[length:length + j + 1])
+    #                         length += j
+    #                         break
 
     
-    lines.append(text[length:len(text)])
+    # lines.append(text[length:len(text)])
+
+    lines = make_lines(text, 'comment')
 
     if sectionid == 0:
         lines.insert(0, ' ')
@@ -126,10 +159,10 @@ def comment_image(username, text, num, sectionid, asker):
     draw = ImageDraw.Draw(mask) 
     draw.ellipse((0, 0) + size, fill=255)
 
-    for pfp in os.listdir('../pfp'):
+    for pfp in os.listdir('./pfp'):
         if 'pfp' in pfp:
 
-            im = Image.open('../pfp/'+pfp)
+            im = Image.open('./pfp/'+pfp)
             im = im.convert('RGBA')
             im = im.resize((40,40))
             
@@ -152,29 +185,31 @@ def comment_image(username, text, num, sectionid, asker):
 def comment_blank_image(text, index, asker):
     lines = []
     length = 0
-    font = ImageFont.truetype('../fonts/helvetica.ttf', 20)
+    font = ImageFont.truetype('./fonts/helvetica.ttf', 20)
 
-    for i in range(len(text)):
-        if i != 0:
-            if text[i] == '\n':
-                lines.append(text[length:i-1])
-                while text[i] == ' ' or text[i] == '\n':
-                    i += 1
-                length = i
-            if (i - length) % 40 == 0:
-                if text[i] == ' ':
-                    lines.append(text[length:i])
-                    while text[i] == ' ' or text[i] == '\n':
-                        i += 1
-                    length = i
-                else:
-                    for j, k in reversed(list(enumerate(text[length:i]))):
-                        if k == ' ':
-                            lines.append(text[length:length + j + 1])
-                            length += j
-                            break
+    # for i in range(len(text)):
+    #     if i != 0:
+    #         if text[i] == '\n':
+    #             lines.append(text[length:i-1])
+    #             while text[i] == ' ' or text[i] == '\n':
+    #                 i += 1
+    #             length = i
+    #         if (i - length) % 40 == 0:
+    #             if text[i] == ' ':
+    #                 lines.append(text[length:i])
+    #                 while text[i] == ' ' or text[i] == '\n':
+    #                     i += 1
+    #                 length = i
+    #             else:
+    #                 for j, k in reversed(list(enumerate(text[length:i]))):
+    #                     if k == ' ':
+    #                         lines.append(text[length:length + j + 1])
+    #                         length += j
+    #                         break
     
-    lines.append(text[length:len(text)])   
+    # lines.append(text[length:len(text)])   
+
+    lines = make_lines(text, 'call')
 
     text = ''
     for line in lines:
@@ -195,5 +230,7 @@ def comment_blank_image(text, index, asker):
 
 
 if __name__ == '__main__':
+    text = 'Lorem ipsum'
+    username = 'Lorem ipsum'
     comment_image(username, text, 0, 0)
     title_image('what\'s 9 + 10??', 'u/bogos', 'r/binted')

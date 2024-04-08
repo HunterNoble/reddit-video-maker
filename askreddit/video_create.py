@@ -5,7 +5,7 @@ from datetime import datetime
 import moviepy.editor as mpe
 import os, random, time, shutil, re
 
-def create_video(username):
+def create_video(username, title):
     audioClip = []
     imageClip = []
     length = -0.5
@@ -50,8 +50,8 @@ def create_video(username):
     video_audio = CompositeAudioClip(audioClip)
 
     # background_clip = ColorClip((720,1280), (0,0,255), duration=video_audio.duration)
-    bg_file = os.listdir("../bg_vids")[random.randrange(0,len(os.listdir("../bg_vids")))]
-    background_clip = VideoFileClip("../bg_vids/"+bg_file)
+    bg_file = os.listdir("./bg_vids")[random.randrange(0,len(os.listdir("./bg_vids")))]
+    background_clip = VideoFileClip("./bg_vids/"+bg_file)
 
     # set background clip to short form media size
     background_clip = crop(background_clip, x_center=background_clip.w/2, y_center=background_clip.h/2, width=res_x, height=res_y)
@@ -77,22 +77,24 @@ def create_video(username):
     video_clip = CompositeVideoClip([video_clip] + imageClip)
 
 
-    audio_background = mpe.AudioFileClip("../music/"+os.listdir("../music")[random.randrange(0,len(os.listdir("../music")))])
+    audio_background = mpe.AudioFileClip("./music/"+os.listdir("./music")[random.randrange(0,len(os.listdir("./music")))])
 
     # create music to last video duration
     while audio_background.duration < video_clip.duration:
-        # audio_background = concatenate_audioclips([audio_background, mpe.AudioFileClip("../music/"+os.listdir("../music")[random.randrange(0,len(os.listdir("../music")))])])
+        # audio_background = concatenate_audioclips([audio_background, mpe.AudioFileClip("./music/"+os.listdir("./music")[random.randrange(0,len(os.listdir("./music")))])])
         audio_background = concatenate_audioclips([audio_background, audio_background])
 
     # final audio that will be put over video
-    final_audio = mpe.CompositeAudioClip([video_audio, audio_background.fx(afx.volumex, 0.25)]).set_duration(background_clip.duration)
+    # final_audio = mpe.CompositeAudioClip([video_audio, audio_background.fx(afx.volumex, 0.25)]).set_duration(background_clip.duration)
+    final_audio = mpe.CompositeAudioClip([video_audio]).set_duration(background_clip.duration)
     video_clip.audio = final_audio
 
     # adjust video_clip speed
     # video_clip = video_clip.fx(vfx.speedx, 1.1)
 
     # create mp4 file
-    video_clip.write_videofile("../exports/"+datetime.now().strftime("%Y-%m-%d %H-%M-%S - ")+username+".mp4", fps=60)
+    # video_clip.write_videofile("./exports/"+datetime.now().strftime("%Y-%m-%d %H-%M-%S - ")+username+".mp4", fps=60)
+    video_clip.write_videofile("./exports/" + title.upper() + ' - ' + username.upper() + '.mp4', fps=30)
 
     background_clip.close()
     video_clip.close()
@@ -100,7 +102,7 @@ def create_video(username):
     audio_background.close()
     final_audio.close()
 
-    time.sleep(3)
+    # time.sleep(3)
 
     # remove temp directory
     shutil.rmtree(username+"")

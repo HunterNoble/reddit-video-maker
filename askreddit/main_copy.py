@@ -5,7 +5,7 @@ from utils.audio_generator import soundify_author, soundify_comment
 # from utils.audio_gTTS import soundify_author, soundify_comment
 from utils.caption_create import comment_image, title_image, comment_blank_image
 from utils.video_create import create_video
-import shutil, os, time, concurrent.futures
+import shutil, os, time, re, concurrent.futures
 
 # Gets posts and top x comments from selected subreddit
 ### subreddit, number of posts, timeframe
@@ -16,12 +16,13 @@ def process_video(i):
     post = scrape_comments("askreddit", postnum, "day")
     # get post author
     asker = str(post[0].author)
+    title = re.sub(r'[\W_]+', ' ', str(post[0].title.strip()), flags=re.ASCII)
 
     print(f'\nScraped post {postnum}.')
 
     # skip if video already exists for asker - probably a cleaner way to do this
     for files in os.listdir('../exports'):
-        if asker + '.mp4' in files:
+        if asker.upper() + '.mp4' in files:
             print (f'File already exists for {asker}.\nThis was post {postnum}.\n')
             return None
     print(f'Creating post for {asker}. This is post {postnum}.')
@@ -38,12 +39,11 @@ def process_video(i):
 
     if len(post) > 1:
         post.insert(1, {'author':'', 'body':'Share your thoughts in the comments'})
-    if len(post) > 2:
-        post.insert (4, {'author':'', 'body':'Don\'t forget to follow!'})
-    if len(post) > 12:
-        post.insert (9, {'author':'', 'body':'If you hold the comment button, you will see your 4 most used emoji'})
-    # if len(post) > 15:
-    #     post.insert (12, {'author':'', 'body':'The third name you see when you click Share then More secretly has a crush on you'})
+        post.insert (3, {'author':'', 'body':'Don\'t forget to follow!'})
+        if len(post) > 12:
+            post.insert (9, {'author':'', 'body':'If you hold the comment button, you will see your 4 most used emoji'})
+            # if len(post) > 15:
+            #     post.insert (12, {'author':'', 'body':'The third name you see when you click Share then More secretly has a crush on you'})
     
     for j in range(len(post)):
         try:
@@ -60,7 +60,7 @@ def process_video(i):
 
         if j == 0:
             # if title post, print title caption with post name and info
-            title_image(post[j].title, author, "r/"+subreddit)
+            title_image(post[j].title.strip(), author, "r/"+subreddit)
             soundify_author(post[j].title, asker)
         else:
             # if not title post, create comment caption
@@ -113,7 +113,7 @@ def process_video(i):
     else:
         author = post[0].author.name
 
-    create_video(author)
+    create_video(author, title)
 
 if __name__ == '__main__':
     # input of how many posts to scrape
@@ -125,15 +125,18 @@ if __name__ == '__main__':
     t1 = time.perf_counter()
 
     # threading/multiprocessing to speed up video creation
-    # with concurrent.futures.ProcessPoolExecutor() as executor:
-    with concurrent.futures.ThreadPoolExecutor() as executor:
-        for i in range(num_of_posts):
-            print(f'Checking post #{i+1} criteria.')
-            executor.submit(process_video, i)
+    # with concurrent.futures.ProcessPoolExecutor() as executor: # multiprocessing
+    # with concurrent.futures.ThreadPoolExecutor() as executor: # threading
+    #     for i in range(num_of_posts):
+    #         print(f'Checking post #{i+1} criteria.')
+    #         executor.submit(process_video, i)
+
+    for i in range(num_of_posts):
+        process_video(i)
 
     t2 = time.perf_counter()
 
     print(f'Finished in {t2-t1} seconds')
 
 # TikTok tags :
-# #fyp #foryoupage #askreddit #reddit #askredditstories #redditreadings #reddittts
+# #fyp #foryoupage #reddittts #askredditstories #redditreadings #reddit #askreddit #xyzcba #viral #fypシ

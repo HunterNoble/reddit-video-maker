@@ -44,10 +44,10 @@ def scrape_comments(subreddit, count, span):
         got_comments = get_comments(post)
 
         # if one of the top comments is exceedingly long, makes that the only comment
-        for comment in got_comments:
-            if len(comment.body) > 600:
-                got_comments = [comment]
-                break
+        # for comment in got_comments:
+        #     if len(comment.body) > 600:
+        #         got_comments = [comment]
+        #         break
         comments=[post]
         length = 0
 
@@ -56,8 +56,7 @@ def scrape_comments(subreddit, count, span):
             length += len(got_comments[comment].body)
             if length > 2000 and comment > 0:
                 break
-            else:
-                comments.append(got_comments[comment])
+            comments.append(got_comments[comment])
         # for comment in range(len(got_comments)):
         #     length += len(got_comments[comment].body)
         #     if length < 3000:
